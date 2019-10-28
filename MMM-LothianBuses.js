@@ -15,10 +15,10 @@ Module.register('MMM-LothianBuses', {
 
     start: function() {
         const self = this;
-        setTimeout(function() {
+        self.update();
+        setInterval(function() {
             self.update();
         }, this.config.interval * 1000);
-        self.update();
     },
 
     getScripts: function () {
@@ -42,24 +42,26 @@ Module.register('MMM-LothianBuses', {
                 }
             }).then(response => response.json());
         })).then(jsons => {
-            this.buses = [];
+            const newBuses = [];
             jsons.forEach(json => {
                 if (json === null) {
                     return;
                 }
                 json.forEach(bus => {
-                    this.buses.push(bus);
+                    newBuses.push(bus);
                 });
             });
-            this.buses.sort((a, b) => a.routeName - b.routeName);
-            this.isUpdated = false;
+            newBuses.sort((a, b) => a.routeName - b.routeName);
+            const animate = this.buses.length !== newBuses.length;
+            this.buses = newBuses;
+            this.isUpdated = true;
             if (!this.isLoaded) {
                 this.isLoaded = true;
             }
+            this.updateDom(animate ? this.config.animationSpeed : undefined);
         }).catch(error => {
             Log.error("Failed to update data: ", error);
             this.isUpdated = false;
-        }).finally(() => {
             this.updateDom(this.config.animationSpeed);
         });
     },
