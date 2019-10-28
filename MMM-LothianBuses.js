@@ -14,7 +14,7 @@ Module.register('MMM-LothianBuses', {
     isUpdated: false,
 
     start: function() {
-        var self = this;
+        const self = this;
         setTimeout(function() {
             self.update();
         }, this.config.interval * 1000);
@@ -65,7 +65,7 @@ Module.register('MMM-LothianBuses', {
     },
 
     getDom: function() {
-        var wrapper = document.createElement('div');
+        const wrapper = document.createElement('div');
         wrapper.className = 'lothian-buses';
 
         if (!this.config.apiKey) {
@@ -90,32 +90,32 @@ Module.register('MMM-LothianBuses', {
         }
 
         this.buses.forEach(bus => {
-            var number = bus.routeName;
-            var departures = Array.from(bus.departures);
+            const number = bus.routeName;
+            const departures = Array.from(bus.departures);
 
-            var row = document.createElement('div');
+            const row = document.createElement('div');
             row.className = 'bus';
 
             // Bus number
-            var busNumber = document.createElement('div');
+            const busNumber = document.createElement('div');
             busNumber.className = 'bus-number';
             busNumber.innerHTML = `<span class="number thin medium">${number}</span>`;
             row.appendChild(busNumber);
 
             if (departures && departures.length > 0) {
                 // Destination
-                var destination = document.createElement('span');
+                const destination = document.createElement('span');
                 destination.className = 'light small dimmed';
                 destination.innerText = departures[0].destination;
                 busNumber.appendChild(destination);
 
                 // Bus times
-                var nextTime = moment(departures[0].departureTimeUnix * 1000).diff(new Date(), 'minutes');
-                var busTimes = document.createElement('div');
+                const nextTime = moment(departures[0].departureTimeUnix * 1000).diff(new Date(), 'minutes');
+                const busTimes = document.createElement('div');
                 busTimes.className = 'bus-times medium thin';
-                var busTimeMain = document.createElement('div');
+                const busTimeMain = document.createElement('div');
                 busTimeMain.className = `bus-time-main ${departures[0].isLive ? 'bright' : 'dimmed'}`;
-                var innerHTML = [
+                const innerHTML = [
                     `<span><strong>${nextTime > 0 ? nextTime : this.translate('Due')}${!departures[0].isLive ? '<sup>*</sup>' : ''}</strong></span>`,
                 ];
                 if (nextTime > 0) {
@@ -125,7 +125,7 @@ Module.register('MMM-LothianBuses', {
                 busTimes.append(busTimeMain);
 
                 departures.shift();
-                var busTimeNext = document.createElement('div');
+                const busTimeNext = document.createElement('div');
                 busTimeNext.className = 'bus-time-next small';
                 if (departures.length > 0) {
                     busTimeNext.innerHTML = `${this.translate('then in')} ${departures.map(departure => `<strong>${moment(departure.departureTimeUnix * 1000).diff(new Date(), 'minutes')}${!departures.isLive ? '<sup>*</sup>' : ''}</strong>`).join(', ')} ${this.translate('mins')}`;
