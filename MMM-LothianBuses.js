@@ -116,7 +116,7 @@ Module.register('MMM-LothianBuses', {
                 var busTimeMain = document.createElement('div');
                 busTimeMain.className = `bus-time-main ${departures[0].isLive ? 'bright' : 'dimmed'}`;
                 var innerHTML = [
-                    `<span><strong>${nextTime > 0 ? nextTime : 'Due'}${!departures[0].isLive ? '<sup>*</sup>' : ''}</strong></span>`,
+                    `<span><strong>${nextTime > 0 ? nextTime : this.translate('Due')}${!departures[0].isLive ? '<sup>*</sup>' : ''}</strong></span>`,
                 ];
                 if (nextTime > 0) {
                     innerHTML.push(`<span>${this.translate('mins')}</span>`);
