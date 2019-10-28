@@ -110,11 +110,18 @@ Module.register('MMM-LothianBuses', {
                 busNumber.appendChild(destination);
 
                 // Bus times
+                var nextTime = moment(departures[0].departureTimeUnix * 1000).diff(new Date(), 'minutes');
                 var busTimes = document.createElement('div');
                 busTimes.className = 'bus-times medium thin';
                 var busTimeMain = document.createElement('div');
                 busTimeMain.className = `bus-time-main ${departures[0].isLive ? 'bright' : 'dimmed'}`;
-                busTimeMain.innerHTML = `<span><strong>${moment(departures[0].departureTimeUnix * 1000).diff(new Date(), 'minutes')}${!departures[0].isLive ? '<sup>*</sup>' : ''}</strong></span> <span>${this.translate('mins')}</span>`;
+                var innerHTML = [
+                    `<span><strong>${nextTime > 0 ? nextTime : 'Due'}${!departures[0].isLive ? '<sup>*</sup>' : ''}</strong></span>`,
+                ];
+                if (nextTime > 0) {
+                    innerHTML.push(`<span>${this.translate('mins')}</span>`);
+                }
+                busTimeMain.innerHTML = innerHTML.join(' ');
                 busTimes.append(busTimeMain);
 
                 departures.shift();
