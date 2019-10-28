@@ -9,7 +9,7 @@ The data is provided by [Transport for Edinburgh Open data](https://tfe-opendata
 
 ### Prerequisites
 
-This module requires an API key to work. You can make [a request to get one here](http://www.mybustracker.co.uk/?page=API%20Key).
+This module requires an API key to work. The key is free but you need to make [a request to get one here](http://www.mybustracker.co.uk/?page=API%20Key).
 
 ### Setup
 
