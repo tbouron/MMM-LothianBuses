@@ -51,7 +51,17 @@ Module.register('MMM-LothianBuses', {
                     newBuses.push(bus);
                 });
             });
-            newBuses.sort((a, b) => a.routeName - b.routeName);
+            newBuses.sort((a, b) => {
+                const d = a.departures[0].departureTimeUnix - b.departures[0].departureTimeUnix;
+                if (d !== 0) {
+                    return d;
+                }
+                const n = a.routeName - b.routeName;
+                if (n !== 0) {
+                    return n;
+                }
+                return a.departures[0].destination - b.departures[0].destination;
+            });
             const animate = this.buses.length !== newBuses.length;
             this.buses = newBuses;
             this.isUpdated = true;
