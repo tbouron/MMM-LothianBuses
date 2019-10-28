@@ -128,9 +128,9 @@ Module.register('MMM-LothianBuses', {
                 const busTimeMain = document.createElement('div');
                 busTimeMain.className = `bus-time-main ${departures[0].isLive ? 'bright' : 'dimmed'}`;
                 const innerHTML = [
-                    `<span><strong>${nextTime > 0 ? nextTime : this.translate('Due')}${!departures[0].isLive ? '<sup>*</sup>' : ''}</strong></span>`,
+                    `<span><strong>${nextTime > 1 ? nextTime : this.translate('Due')}${!departures[0].isLive ? '<sup>*</sup>' : ''}</strong></span>`,
                 ];
-                if (nextTime > 0) {
+                if (nextTime > 1) {
                     innerHTML.push(`<span>${this.translate('mins')}</span>`);
                 }
                 busTimeMain.innerHTML = innerHTML.join(' ');
@@ -140,7 +140,7 @@ Module.register('MMM-LothianBuses', {
                 const busTimeNext = document.createElement('div');
                 busTimeNext.className = 'bus-time-next small';
                 if (departures.length > 0) {
-                    busTimeNext.innerHTML = `${this.translate('then in')} ${departures.map(departure => `<strong>${moment(departure.departureTimeUnix * 1000).diff(new Date(), 'minutes')}${!departures.isLive ? '<sup>*</sup>' : ''}</strong>`).join(', ')} ${this.translate('mins')}`;
+                    busTimeNext.innerHTML = `${this.translate('then in')} ${departures.map(departure => `<strong>${moment(departure.departureTimeUnix * 1000).diff(new Date(), 'minutes')}</strong>`).join(', ')} ${this.translate('mins')}`;
                 } else {
                     busTimeNext.innerHTML = this.translate('not available');
                 }
