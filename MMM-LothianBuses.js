@@ -12,6 +12,7 @@ Module.register('MMM-LothianBuses', {
     buses: [],
     isLoaded: false,
     isUpdated: false,
+    noData: false,
 
     start: function() {
         const self = this;
@@ -43,14 +44,19 @@ Module.register('MMM-LothianBuses', {
             }).then(response => response.json());
         })).then(jsons => {
             const newBuses = [];
+            let hasNoData = false;
             jsons.forEach(json => {
                 if (json === null) {
+                    hasNoData = hasNoData || true;
                     return;
                 }
                 json.forEach(bus => {
                     newBuses.push(bus);
                 });
             });
+
+            this.noData = hasNoData;
+
             newBuses.sort((a, b) => {
                 const d = a.departures[0].departureTimeUnix - b.departures[0].departureTimeUnix;
                 if (d !== 0) {
@@ -72,6 +78,7 @@ Module.register('MMM-LothianBuses', {
         }).catch(error => {
             Log.error("Failed to update data: ", error);
             this.isUpdated = false;
+            this.noData = true;
             this.updateDom(this.config.animationSpeed);
         });
     },
@@ -98,6 +105,9 @@ Module.register('MMM-LothianBuses', {
         if (this.buses.length === 0) {
             wrapper.className = 'light small dimmed';
             wrapper.innerHTML = this.translate('No buses');
+            if (this.noData) {
+                wrapper.innerHTML += ` (${this.translate('No data from the API')})`;
+            }
             return wrapper;
         }
 
@@ -117,16 +127,16 @@ Module.register('MMM-LothianBuses', {
             if (departures && departures.length > 0) {
                 // Destination
                 const destination = document.createElement('span');
-                destination.className = 'light small dimmed';
+                destination.className = 'light xsmall light';
                 destination.innerText = departures[0].destination;
                 busNumber.appendChild(destination);
 
                 // Bus times
                 const nextTime = moment(departures[0].departureTimeUnix * 1000).diff(new Date(), 'minutes');
                 const busTimes = document.createElement('div');
-                busTimes.className = 'bus-times medium thin';
+                busTimes.className = 'bus-times';
                 const busTimeMain = document.createElement('div');
-                busTimeMain.className = `bus-time-main ${departures[0].isLive ? 'bright' : 'dimmed'}`;
+                busTimeMain.className = `bus-time-main medium thin ${departures[0].isLive ? 'bright' : 'dimmed'}`;
                 const innerHTML = [
                     `<span><strong>${nextTime > 1 ? nextTime : this.translate('Due')}${!departures[0].isLive ? '<sup>*</sup>' : ''}</strong></span>`,
                 ];
@@ -138,7 +148,7 @@ Module.register('MMM-LothianBuses', {
 
                 departures.shift();
                 const busTimeNext = document.createElement('div');
-                busTimeNext.className = 'bus-time-next small';
+                busTimeNext.className = 'bus-time-next xsmall light';
                 if (departures.length > 0) {
                     busTimeNext.innerHTML = `${this.translate('then in')} ${departures.map(departure => `<strong>${moment(departure.departureTimeUnix * 1000).diff(new Date(), 'minutes')}</strong>`).join(', ')} ${this.translate('mins')}`;
                 } else {
