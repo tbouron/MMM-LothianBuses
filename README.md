@@ -41,6 +41,7 @@ then add the module to your MagicMirror's configuration. Here is an example:
                     '<BUS-STOP-ID-#1>',
                     '<BUS-STOP-ID-#2>',
                     '<BUS-STOP-ID-#3>',
+                    ['<BUS-STOP-ID-#4>', '<BUS-LINE-TO-INCLUDE>', '<ANOTHER-BUS-LINE-TO-INCLUDE>', ...]
                     ....
                 ]
             }
@@ -48,6 +49,13 @@ then add the module to your MagicMirror's configuration. Here is an example:
     ]
 }
 ```
+
+### Configuration options
+
+| Configuration key | Description | Default | Required |
+| --- | --- | --- | ---|
+| apiKey | The API key for the transports of Edinburgh open data. You can [request one here](http://www.mybustracker.co.uk/?page=API%20Key). | `null` | Yes |
+| busStopIds | The list of bus stop IDs to display. Each items can either be a string containing the bus stop ID, or an array where the first item is the bus stop ID, and the subsequent ones are line numbers that needs to be included. | `[]` | Yes |
 
 ### Finding bus stop IDs
 

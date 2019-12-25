@@ -35,13 +35,23 @@ Module.register('MMM-LothianBuses', {
             return;
         }
 
-        Promise.all(this.config.busStopIds.map(busStopId => {
+        Promise.all(this.config.busStopIds.map(busStopItem => {
+            let busStopId = busStopItem;
+            let includeLines = null;
+            if (busStopItem instanceof Array) {
+                busStopId = busStopItem[0];
+                includeLines = busStopItem.slice(1);
+            }
             return fetch(`${this.apiHost}/live_bus_times/${busStopId}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Token ${this.config.apiKey}`
                 }
-            }).then(response => response.json());
+            }).then(response => {
+                return includeLines instanceof Array
+                    ? response.json().then(json => json.filter(bus => includeLines.includes(bus.routeName)))
+                    : response.json();
+            });
         })).then(jsons => {
             const newBuses = [];
             let hasNoData = false;
