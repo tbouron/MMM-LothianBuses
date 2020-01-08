@@ -10,9 +10,9 @@ Module.register('MMM-LothianBuses', {
     apiHost: 'https://tfe-opendata.com/api/v1',
 
     buses: [],
-    isLoaded: false,
-    isUpdated: false,
-    noData: false,
+
+    isError: false,
+    hasWarnings: false,
 
     start: function() {
         const self = this;
@@ -27,7 +27,10 @@ Module.register('MMM-LothianBuses', {
     },
 
     getStyles: function () {
-        return ['MMM-LothianBuses.css'];
+        return [
+            'font-awesome.css',
+            'MMM-LothianBuses.css'
+        ];
     },
 
     update: function() {
@@ -54,10 +57,10 @@ Module.register('MMM-LothianBuses', {
             });
         })).then(jsons => {
             const newBuses = [];
-            let hasNoData = false;
+            let hasWarnings = false;
             jsons.forEach(json => {
                 if (json === null) {
-                    hasNoData = hasNoData || true;
+                    hasWarnings = hasWarnings || true;
                     return;
                 }
                 json.forEach(bus => {
@@ -65,7 +68,7 @@ Module.register('MMM-LothianBuses', {
                 });
             });
 
-            this.noData = hasNoData;
+            this.hasWarnings = hasWarnings;
 
             newBuses.sort((a, b) => {
                 const d = a.departures[0].departureTimeUnix - b.departures[0].departureTimeUnix;
@@ -80,15 +83,12 @@ Module.register('MMM-LothianBuses', {
             });
             const animate = this.buses.length !== newBuses.length;
             this.buses = newBuses;
-            this.isUpdated = true;
-            if (!this.isLoaded) {
-                this.isLoaded = true;
-            }
+            this.isError = false;
             this.updateDom(animate ? this.config.animationSpeed : undefined);
         }).catch(error => {
             Log.error("Failed to update data: ", error);
-            this.isUpdated = false;
-            this.noData = true;
+            this.isError = true;
+            this.hasWarnings = true;
             this.updateDom(this.config.animationSpeed);
         });
     },
@@ -107,18 +107,19 @@ Module.register('MMM-LothianBuses', {
             wrapper.innerHTML = this.translate('Module not configured. Please specify at least one bus stop');
             return wrapper;
         }
-        if (!this.isLoaded) {
+        if (this.isError) {
             wrapper.className = 'light small dimmed';
-            wrapper.innerHTML = this.translate('Loading live timetable');
+            wrapper.innerHTML = this.translate('Data unavailable. Please check logs.');
             return wrapper;
         }
         if (this.buses.length === 0) {
             wrapper.className = 'light small dimmed';
             wrapper.innerHTML = this.translate('No buses');
-            if (this.noData) {
-                wrapper.innerHTML += ` (${this.translate('No data from the API')})`;
-            }
             return wrapper;
+        }
+
+        if (this.hasWarnings) {
+            wrapper.innerHTML += `<div class="light xsmall dimmed"><i class="fas fa-exclamation-triangle"></i> <em>${this.translate('Some of the routes are not available.')}</em></div>`;
         }
 
         this.buses.forEach(bus => {
