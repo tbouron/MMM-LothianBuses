@@ -87,6 +87,7 @@ Module.register('MMM-LothianBuses', {
             this.updateDom(animate ? this.config.animationSpeed : undefined);
         }).catch(error => {
             Log.error("Failed to update data: ", error);
+            this.buses = [];
             this.isError = true;
             this.hasWarnings = true;
             this.updateDom(this.config.animationSpeed);
@@ -132,7 +133,7 @@ Module.register('MMM-LothianBuses', {
             // Bus number
             const busNumber = document.createElement('div');
             busNumber.className = 'bus-number';
-            busNumber.innerHTML = `<span class="number thin medium">${number}</span>`;
+            busNumber.innerHTML = `<span class="number light medium">${number}</span>`;
             row.appendChild(busNumber);
 
             if (departures && departures.length > 0) {
